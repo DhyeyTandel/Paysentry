@@ -1,0 +1,36 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/paysentry
+      SPRING_DATASOURCE_USERNAME: paysentry
+      SPRING_DATASOURCE_PASSWORD: paysentry
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: paysentry
+      POSTGRES_USER: paysentry
+      POSTGRES_PASSWORD: paysentry
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paysentry -d paysentry"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 20

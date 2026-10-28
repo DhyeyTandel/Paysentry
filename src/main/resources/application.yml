@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: paysentry
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/paysentry}
+    username: ${SPRING_DATASOURCE_USERNAME:paysentry}
+    password: ${SPRING_DATASOURCE_PASSWORD:paysentry}
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
+
+paysentry:
+  rules:
+    velocity-1h:
+      weight: 0.40
+      max-transactions: 5
+      window-seconds: 3600
+    high-amount:
+      weight: 0.35
+      multiplier: 3.0
+    geo-mismatch:
+      weight: 0.30
+    new-device:
+      weight: 0.15
+  thresholds:
+    approve-below: 0.3
+    review-below: 0.7
